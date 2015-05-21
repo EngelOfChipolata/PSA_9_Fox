@@ -1,6 +1,6 @@
 import math, numpy as np, scipy.optimize
 import matplotlib.pyplot as plt
-import pd
+#import pd
 import utils as ut
 
 ''' naming of state and input components '''
@@ -219,7 +219,7 @@ def plot(time, X, U=None, figure=None, window_title="Trajectory"):
     ("$\\theta$", "deg",   ut.deg_of_rad(X[:,s_th]), 2.),
     ("$q$",       "deg/s", ut.deg_of_rad(X[:,s_q]), 2.)]
     for i, (title, ylab, data, min_yspan) in enumerate(plots):
-    ax = plt.subplot(3, 2, i+1)
-    plt.plot(time, data)
-    ut.decorate(ax, title=title, ylab=ylab, min_yspan=min_yspan)
+        ax = plt.subplot(3, 2, i+1)
+        plt.plot(time, data)
+        ut.decorate(ax, title=title, ylab=ylab, min_yspan=min_yspan)
     return figure
