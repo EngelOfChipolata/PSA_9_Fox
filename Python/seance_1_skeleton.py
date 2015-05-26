@@ -39,8 +39,8 @@ def plot_CL(P, filename=None):
     plt.legend(['$\delta _{{PHR}} =  ${:.1f}'.format(ut.deg_of_rad(dm)) for dm in dms], loc='best')
     if filename<> None: plt.savefig(filename, dpi=160)
 
-def Cm(P, alpha, ms1):
-    Cma = -ms1*P.CLa
+def Cm(P, alpha):
+    Cma = -P.ms*P.CLa
     return P.Cm0 + Cma*(alpha-P.a0)
 
 def plot_Cm(P, filename=None):
@@ -89,8 +89,8 @@ def plot_polar(P):
 aircraft = dyn.Param_737_300() # use assigned aircraft
 # plot_thrust(aircraft)
 # plot_CL(aircraft)
-plot_Cm(aircraft)
-#plot_dphr_e(aircraft)
+# plot_Cm(aircraft)
+plot_dphr_e(aircraft)
 #plot_CLe(aircraft)
 #plot_polar(aircraft)
 plt.show()
