@@ -82,9 +82,9 @@ def plot_polar(P):
     #
     pass
 
-aircraft = dyn.Param_A320() # use assigned aircraft
+aircraft = dyn.Param_737_300() # use assigned aircraft
 plot_thrust(aircraft)
-#plot_CL(aircraft)
+# plot_CL(aircraft)
 #plot_Cm(aircraft)
 #plot_dphr_e(aircraft)
 #plot_CLe(aircraft)
