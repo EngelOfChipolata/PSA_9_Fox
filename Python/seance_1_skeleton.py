@@ -58,15 +58,14 @@ def dphr_e(P, alpha):
     
 def plot_dphr_e(P, filename=None):
     alphas = np.linspace(ut.rad_of_deg(-10), ut.rad_of_deg(20), 30)
-    Sts = [30, 31.31, 32.8, 35]
+    mss = [-0.1, 0., 0.2, 1.]
     figure = ut.prepare_fig(None, u'Équilibre {}'.format(P.name))
-    for St in Sts:
-        P.St = St
-        P.compute_auxiliary()
+    for ms in mss:
+        P.set_mass_and_static_margin(0.5, ms)
         dmes = np.array([dphr_e(P, alpha) for alpha in alphas])
         plt.plot(ut.deg_of_rad(alphas), ut.deg_of_rad(dmes))
     ut.decorate(plt.gca(), r'$\delta_{PHR_e}$', r'$\alpha$ en degres', r'$\delta_{PHR_e}$ en degres',
-                ['Vt =  {: .1f}'.format(P.lt*St/P.cbar/P.S) for St in Sts])
+                ['$ms =  ${: .1f}'.format(ms) for ms in mss])
 
 
 def plot_CLe(P):
@@ -82,16 +81,25 @@ def plot_CLe(P):
                 ['$ms =  ${: .1f}'.format(sm) for sm in sms])
 
 def plot_polar(P):
-    #
-    # TODO
-    #
-    pass
+    alphas = np.linspace(ut.rad_of_deg(-10), ut.rad_of_deg(20), 30)
+    figure = ut.prepare_fig(None, u'Polaire équilibrée{}'.format(P.name))
+    sms = [0.2, 1]
+    for sm in sms:
+        P.set_mass_and_static_margin(0.5, sm)
+        dphres = [dphr_e(P, alpha) for alpha in alphas]
+        CLes = [CL(P, alpha, dphr) for alpha, dphr in zip(alphas, dphres)]
+        CDes = [P.CD0 + P.ki * CL1**2 for CL1 in CLes]
+        plt.plot(CDes, CLes)
+    ut.decorate(plt.gca(), u'Polaire équilibrée', r'$CD_e$', r'$CL_e$',
+                ['$ms =  ${: .1f}'.format(sm) for sm in sms])
+
+
 
 aircraft = dyn.Param_737_300() # use assigned aircraft
 # plot_thrust(aircraft)
 # plot_CL(aircraft)
 # plot_Cm(aircraft)
-plot_dphr_e(aircraft)
-#plot_CLe(aircraft)
-#plot_polar(aircraft)
+#plot_dphr_e(aircraft)
+# plot_CLe(aircraft)
+plot_polar(aircraft)
 plt.show()
