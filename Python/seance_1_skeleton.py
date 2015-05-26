@@ -58,14 +58,15 @@ def dphr_e(P, alpha):
     
 def plot_dphr_e(P, filename=None):
     alphas = np.linspace(ut.rad_of_deg(-10), ut.rad_of_deg(20), 30)
-    mss = [-0.1, 0., 0.2, 1.]
+    Sts = [30, 31.31, 32.8, 35]
     figure = ut.prepare_fig(None, u'Équilibre {}'.format(P.name))
-    for ms in mss:
-        P.set_mass_and_static_margin(0.5, ms)
+    for St in Sts:
+        P.St = St
+        P.compute_auxiliary()
         dmes = np.array([dphr_e(P, alpha) for alpha in alphas])
         plt.plot(ut.deg_of_rad(alphas), ut.deg_of_rad(dmes))
     ut.decorate(plt.gca(), r'$\delta_{PHR_e}$', r'$\alpha$ en degres', r'$\delta_{PHR_e}$ en degres',
-                ['$ms =  ${: .1f}'.format(ms) for ms in mss])
+                ['Vt =  {: .1f}'.format(P.lt*St/P.cbar/P.S) for St in Sts])
 
 
 def plot_CLe(P):
