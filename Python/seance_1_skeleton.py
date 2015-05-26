@@ -39,15 +39,19 @@ def plot_CL(P, filename=None):
     plt.legend(['$\delta _{{PHR}} =  ${:.1f}'.format(ut.deg_of_rad(dm)) for dm in dms], loc='best')
     if filename<> None: plt.savefig(filename, dpi=160)
 
-def Cm(P, alpha):
-    Cma = -P.ms*P.CLa
+def Cm(P, alpha, ms1):
+    Cma = -ms1*P.CLa
     return P.Cm0 + Cma*(alpha-P.a0)
 
 def plot_Cm(P, filename=None):
-    #
-    # TODO
-    #
-    pass
+    alphas = np.linspace(ut.rad_of_deg(-10), ut.rad_of_deg(20), 30)
+    mss = np.array([-0.1, 0, 0.2, 1])
+    figure = ut.prepare_fig(None, u'Coefficient du moment de tangage {}'.format(P.name))
+    for ms1 in mss:
+        plt.plot(ut.deg_of_rad(alphas), Cm(P, alphas, ms1))
+    ut.decorate(plt.gca(), u'Coefficient du moment de tangage', r'$\alpha$ en degres', '$C_m$')
+    plt.legend(['ms =  {}'.format(ms) for ms in mss], loc='best')
+    if filename<> None: plt.savefig(filename, dpi=160)
 
 def dphr_e(P, alpha):
     return 1./P.Cmd*(P.ms*P.CLa*(alpha-P.a0) - P.Cm0)
@@ -84,8 +88,8 @@ def plot_polar(P):
 
 aircraft = dyn.Param_737_300() # use assigned aircraft
 # plot_thrust(aircraft)
-plot_CL(aircraft)
-#plot_Cm(aircraft)
+# plot_CL(aircraft)
+plot_Cm(aircraft)
 #plot_dphr_e(aircraft)
 #plot_CLe(aircraft)
 #plot_polar(aircraft)
