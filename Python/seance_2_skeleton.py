@@ -24,9 +24,18 @@ def get_trim(aircraft, h, Ma, sm, km):
 def get_all_trims(aircraft, hs, Mas, sms, kms):
     '''
     Calcul de trims pour une serie de points de vol
-    TODO
     '''
-    pass
+    trims = []
+    for h in hs:
+        for Ma in Mas:
+            va = dyn.va_of_mach(Ma,h)
+            arg = {'va':va, 'h':h, 'gamma':0}
+            trim = dyn.trim(dyn.Param_737_300(), arg)
+            trims.append(trim)
+            print trim
+
+    return trims
+
 
 
 
@@ -104,6 +113,15 @@ def get_linearized_model(aicraft, h, Ma, sm, km):
     Xe, Ue = dyn.trim(aircraft, {'va':va, 'h':h, 'gamma':0})
     A, B = ut.num_jacobian(Xe, Ue, aicraft, dyn.dyn)
     poles, vect_p = np.linalg.eig(A[dyn.s_va:, dyn.s_va:])
+#    print("A")
+#    print(A)
+#    print("B")
+ #   print(B)
+  #  print("poles")
+   # print(poles)
+    #print("vect_p")
+    #print(vect_p)
+    #print("\n\n")
     return A, B, poles, vect_p
 
 def plot_poles(aicraft, hs, Mas, sms, kms):
@@ -114,17 +132,42 @@ def plot_poles(aicraft, hs, Mas, sms, kms):
     pass
 
 
-aircraft = dyn.Param_A320()
+aircraft = dyn.Param_737_300()
 
 hs, Mas = [3000, 11000], [0.5, 0.8]
 sms, kms = [0.2, 1.], [0.1, 0.9]
 
-trims = get_all_trims(aircraft, hs, Mas, sms, kms)
+#trims = get_all_trims(aircraft, hs, Mas, sms, kms)
+#plot_trims(aircraft)
 
-plot_trims(aircraft)
 
-plot_traj_trim(aircraft, 5000, 0.5, 0.2, 0.5)
+#plot_traj_trim(aircraft, 5000, 0.5, 0.2, 0.5)
 
-plot_poles(aircraft, hs, Mas, sms, kms)
+#plot_poles(aircraft, hs, Mas, sms, kms)
+
+
 
 plt.show()
+
+def question_1():
+    trims = get_all_trims(aircraft, hs, Mas, sms, kms)
+    plot_trims(aircraft)
+    trim_select = trims[0]
+    plot_traj_trim(aircraft,trim_select[0][1], Mas[1], sms[1], kms[1])
+    print(dyn.propulsion_model(trim_select[0],trim_select[1],aircraft))
+
+def question_2():
+    pass
+
+def question_3():
+    models = []
+    for h in hs:
+        for Ma in Mas:
+            for sm in sms:
+                for km in kms:
+                    model = get_linearized_model(aircraft,h,Ma, sm, km)
+                    models.append(model)
+
+
+
+question_3()
