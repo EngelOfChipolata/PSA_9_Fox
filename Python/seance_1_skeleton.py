@@ -27,6 +27,7 @@ def CL(P, alpha, dphr):
     CLa = P.CLa + St_over_S*P.CLat*(1-0.25)
     CLdphr = St_over_S*P.CLat
     CL = CL0 + CLa*alpha + CLdphr * dphr
+    print('CL: ' + str(CL) + '; alpha : ' + str(alpha) + '; dphr : ' + str(dphr))
     return CL
 
 def plot_CL(P, filename=None):
@@ -100,6 +101,10 @@ aircraft = dyn.Param_737_300() # use assigned aircraft
 # plot_CL(aircraft)
 # plot_Cm(aircraft)
 #plot_dphr_e(aircraft)
-# plot_CLe(aircraft)
-plot_polar(aircraft)
-plt.show()
+#plot_CLe(aircraft)
+#plot_polar(aircraft)
+#plt.show()
+
+print(dphr_e(aircraft, 0))
+print(CL(aircraft,0.06, dphr_e(aircraft,0)))
+print(ut.deg_of_rad(0.06))

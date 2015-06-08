@@ -113,23 +113,28 @@ def get_linearized_model(aicraft, h, Ma, sm, km):
     Xe, Ue = dyn.trim(aircraft, {'va':va, 'h':h, 'gamma':0})
     A, B = ut.num_jacobian(Xe, Ue, aicraft, dyn.dyn)
     poles, vect_p = np.linalg.eig(A[dyn.s_va:, dyn.s_va:])
-#    print("A")
-#    print(A)
-#    print("B")
- #   print(B)
-  #  print("poles")
-   # print(poles)
-    #print("vect_p")
-    #print(vect_p)
-    #print("\n\n")
     return A, B, poles, vect_p
 
-def plot_poles(aicraft, hs, Mas, sms, kms):
+
+def plot_poles(aicraft, hs, Mas, sms, kms, filename=None):
     '''
-    TODO
+    Affichage graphique de la position des poles pour une série de points de trim
     '''
-    # poles.real, poles.imag <- parties réelles et imaginaires d'un complexe 
-    pass
+    margins = (0.03, 0.05, 0.98, 0.95, 0.2, 0.38)
+    fig = ut.prepare_fig(window_title='Poles {}'.format(aircraft.name), figsize=(20.48, 10.24), margins=margins)
+    for i, h in enumerate(hs[::-1]):
+        for j, Ma in enumerate(Mas):
+            ax = plt.subplot(len(hs), len(Mas), i*len(Mas)+j+1)
+            legend = []
+            for k, sm in enumerate(sms):
+                for l, km in enumerate(kms):
+                    A, B, poles, vect_p = get_linearized_model(aicraft, h, Ma, sm, km)
+                    #print('{}'.format(poles))
+                    plt.plot(poles.real, poles.imag, '*', markersize=10)
+                    legend.append('ms={} km={}'.format(sm, km))
+            ut.decorate(ax, r'$h={}m \quad  Ma={}$'.format(h, Ma), legend=legend,  xlim=[-3., 0.1])
+    if filename<> None: plt.savefig(filename, dpi=160)
+
 
 
 aircraft = dyn.Param_737_300()
@@ -139,10 +144,7 @@ sms, kms = [0.2, 1.], [0.1, 0.9]
 
 #trims = get_all_trims(aircraft, hs, Mas, sms, kms)
 #plot_trims(aircraft)
-
-
 #plot_traj_trim(aircraft, 5000, 0.5, 0.2, 0.5)
-
 #plot_poles(aircraft, hs, Mas, sms, kms)
 
 
@@ -161,6 +163,10 @@ def question_2():
 
 def question_3():
     models = []
+    A44s = []
+    Poles = []
+
+# Récuperation des linéarisation pour chaque point de trim
     for h in hs:
         for Ma in Mas:
             for sm in sms:
@@ -168,6 +174,29 @@ def question_3():
                     model = get_linearized_model(aircraft,h,Ma, sm, km)
                     models.append(model)
 
+# Extraction des sous matrices
+
+    for model in models:
+        b = model[0]
+        a = []
+        for (i, row) in enumerate(b):
+            if i>=2:
+                a.append(row[2:])
+        a= np.array(a)
+        A44s.append(a)
+
+    for (i, A) in enumerate(A44s):
+       # print('A{}'.format(i) + ' =' + str(a))
+        poles, vect_p = np.linalg.eig(A)
+        #print(poles)
+        Poles.append(poles)
 
 
-question_3()
+    return A44s, Poles
+
+
+def question_4():
+    plot_poles(aircraft,hs,Mas,sms,kms, 'question_4')
+
+
+question_4()
